@@ -30,7 +30,7 @@ jobs:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: |
-          Test1
+          Test
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
