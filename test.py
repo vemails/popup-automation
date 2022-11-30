@@ -1,56 +1,88 @@
-from __future__ import print_function
+import os
+import zipfile
+from time import sleep
 
-import os.path
+from selenium import webdriver
 
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+PROXY_HOST = '45.94.231.98'  # rotating proxy
+PROXY_PORT = 8000
+PROXY_USER = '1ECbLP'
+PROXY_PASS = '2hwKZu'
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = ['https://mail.google.com/']
 
+manifest_json = """
+{
+    "version": "1.0.0",
+    "manifest_version": 2,
+    "name": "Chrome Proxy",
+    "permissions": [
+        "proxy",
+        "tabs",
+        "unlimitedStorage",
+        "storage",
+        "<all_urls>",
+        "webRequest",
+        "webRequestBlocking"
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "minimum_chrome_version":"22.0.0"
+}
+"""
+
+background_js = """
+var config = {
+        mode: "fixed_servers",
+        rules: {
+          singleProxy: {
+            scheme: "http",
+            host: "%s",
+            port: parseInt(%s)
+          },
+          bypassList: ["localhost"]
+        }
+      };
+
+chrome.proxy.settings.set({value: config, scope: "regular"}, function() {});
+
+function callbackFn(details) {
+    return {
+        authCredentials: {
+            username: "%s",
+            password: "%s"
+        }
+    };
+}
+
+chrome.webRequest.onAuthRequired.addListener(
+            callbackFn,
+            {urls: ["<all_urls>"]},
+            ['blocking']
+);
+""" % (PROXY_HOST, PROXY_PORT, PROXY_USER, PROXY_PASS)
+
+
+def get_chromedriver(use_proxy=False, user_agent=None):
+    path = os.path.dirname(os.path.abspath(__file__))
+    chrome_options = webdriver.ChromeOptions()
+    if use_proxy:
+        pluginfile = 'proxy_auth_plugin.zip'
+
+        with zipfile.ZipFile(pluginfile, 'w') as zp:
+            zp.writestr("manifest.json", manifest_json)
+            zp.writestr("background.js", background_js)
+        chrome_options.add_extension(pluginfile)
+    if user_agent:
+        chrome_options.add_argument('--user-agent=%s' % user_agent)
+    driver = webdriver.Chrome(chrome_options=chrome_options)
+    return driver
 
 def main():
-    """Shows basic usage of the Gmail API.
-    Lists the user's Gmail labels.
-    """
-    creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-
-    try:
-        # Call the Gmail API
-        service = build('gmail', 'v1', credentials=creds)
-        results = service.users().labels().list(userId='me').execute()
-        labels = results.get('labels', [])
-
-        if not labels:
-            print('No labels found.')
-            return
-        print('Labels:')
-        for label in labels:
-            print(label['name'])
-
-    except HttpError as error:
-        # TODO(developer) - Handle errors from gmail API.
-        print(f'An error occurred: {error}')
-
+    driver = get_chromedriver(use_proxy=True)
+    #driver.get('https://www.google.com/search?q=my+ip+address')
+    driver.get('https://httpbin.org/ip')
+    sleep(100)
 
 if __name__ == '__main__':
     main()
