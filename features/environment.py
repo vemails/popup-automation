@@ -12,10 +12,10 @@ import telebot
 # TODO check all context attributes on https://behave.readthedocs.io/en/latest/context_attributes.html#user-attributes
 import gmail
 
-PROXY_HOST = '217.29.62.211'  # rotating proxy
-PROXY_PORT = 11624
-PROXY_USER = 'UqZRwc'
-PROXY_PASS = 'ay0m9F'
+PROXY_HOST = '45.94.231.98'  # rotating proxy
+PROXY_PORT = 8000
+PROXY_USER = '1ECbLP'
+PROXY_PASS = '2hwKZu'
 
 manifest_json = """
 {
