@@ -82,6 +82,7 @@ def get_chromedriver(use_proxy=False, user_agent=None, caps=None):
         chrome_options.add_extension(pluginfile)
     if user_agent:
         chrome_options.add_argument('--user-agent=%s' % user_agent)
+    chrome_options.headless = True
     driver = webdriver.Chrome(chrome_options=chrome_options, desired_capabilities=caps)
     return driver
 
