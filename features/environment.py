@@ -90,7 +90,7 @@ def get_chromedriver(use_proxy=False, user_agent=None, caps=None):
 
 
 def before_all(context):
-    args = ['headless', 'window-size=1920,1080'] if platform != 'darwin' else []
+    args = ['window-size=1920,1080'] if platform != 'darwin' else []
     caps = {
         # -- Chrome Selenoid options
         'browserName': 'chrome',
