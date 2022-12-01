@@ -83,7 +83,8 @@ def get_chromedriver(use_proxy=False, user_agent=None, caps=None):
     if user_agent:
         chrome_options.add_argument('--user-agent=%s' % user_agent)
     chrome_options.add_argument("--headless=chrome")
-    chrome_options.add_argument('--disable-gpu') 
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument("--window-size=1920,1080")
     driver = webdriver.Chrome(chrome_options=chrome_options, desired_capabilities=caps)
     return driver
 
