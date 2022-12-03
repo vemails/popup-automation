@@ -1,6 +1,7 @@
 import configparser
 import os
 import zipfile
+import logging
 
 from sys import platform
 
@@ -84,9 +85,10 @@ def get_chromedriver(use_proxy=False, user_agent=None, caps=None):
         chrome_options.add_argument('--user-agent=%s' % user_agent)
     chrome_options.add_argument("--headless=chrome")
     # chrome_options.add_argument('--disable-gpu')
-    # chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("window-size=1920,1080")
     driver = webdriver.Chrome(chrome_options=chrome_options)
     driver.set_window_size(1920, 1080)
+    logging.warning(driver.get_window_size())
     return driver
 
 
