@@ -83,10 +83,10 @@ def get_chromedriver(use_proxy=False, user_agent=None, caps=None):
     if user_agent:
         chrome_options.add_argument('--user-agent=%s' % user_agent)
     chrome_options.add_argument("--headless=chrome")
-    # chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument("window-size=1920,1080")
-    driver = webdriver.Chrome(chrome_options=chrome_options)
-    driver.set_window_size(1920, 1080)
+    chrome_options.add_argument("--window-size=1920,1080")
+    capabilities = chrome_options.to_capabilities()
+    caps.update(capabilities)
+    driver = webdriver.Chrome(desired_capabilities=caps)
     return driver
 
 
@@ -104,7 +104,7 @@ def before_all(context):
         # -- Chrome browser mobile emulation and headless options
         'goog:chromeOptions': {
             # 'mobileEmulation': {'deviceName': 'iPhone X'},
-            # 'window-size': ['1920,1080'],
+            'window-size': ['1920,1080'],
             'args': args
         }
     }
@@ -130,8 +130,8 @@ def before_all(context):
     '''
 
     # -- Local driver
-    context.driver = get_chromedriver(use_proxy=True)
-
+    context.driver = get_chromedriver(use_proxy=True, caps=caps)
+    
     # -- Remote driver
     # context.driver = webdriver.Remote(command_executor='http://67.207.88.128:4444/wd/hub', desired_capabilities=caps)
 
