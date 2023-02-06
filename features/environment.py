@@ -12,23 +12,13 @@ import gmail
 
 
 def before_all(context):
-    args = ['headless', 'window-size=1920,1080'] if platform != 'darwin' else []
     caps = {
-        # -- Chrome Selenoid options
-        'browserName': 'chrome',
-        'version': '87.0',
-        'selenoid:options':
-            {
-                'enableVNC': True,
-                'enableVideo': False
-            },
-        # -- Chrome browser mobile emulation and headless options
-        'goog:chromeOptions': {
-            # 'mobileEmulation': {'deviceName': 'iPhone X'},
-            # 'window-size': ['1920,1080'],
-            'args': args
+        "browserName": "chrome",
+        "selenoid:options": {
+            "enableVNC": True
         }
     }
+
     '''
         -- Android browser Selenoid options
         "browserName": "android",
@@ -51,10 +41,10 @@ def before_all(context):
     '''
 
     # -- Local driver
-    context.driver = webdriver.Chrome(desired_capabilities=caps)
+    # context.driver = webdriver.Chrome(desired_capabilities=caps)
 
     # -- Remote driver
-    # context.driver = webdriver.Remote(command_executor='http://67.207.88.128:4444/wd/hub', desired_capabilities=caps)
+    context.driver = webdriver.Remote(command_executor="http://37.230.116.188:4444/wd/hub", desired_capabilities=caps)
 
     context.driver.implicitly_wait(10)
     context.driver.maximize_window()
